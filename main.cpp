@@ -22,12 +22,14 @@ vector<TreeElement *> ReadFile(string);
 bool FileExist(char *);
 bool Contains(vector<TreeElement *>, string);
 int IndexOf(vector<TreeElement *>, string);
-vector<TreeElement *> Ordenar(vector<TreeElement *>);
-
+//vector<TreeElement *> Ordenar(vector<TreeElement *>);
+vector<TreeNode *> Ordenar(vector<TreeNode *>);
+TreeNode *CreateTree(vector<TreeNode *>);
+vector<TreeNode *> Fill(vector<TreeElement *>);
+void CodeGenerator();
 /********************MAIN*************************/
 int main(int argc, char *argv[])
 {
-
 	if (argc < 2)
 	{
 		cout << "Parametros insuficientes :(-" << endl;
@@ -37,17 +39,22 @@ int main(int argc, char *argv[])
 		if (FileExist(argv[1]))
 		{
 			string path;
-			vector<TreeElement *> generalNodes = ReadFile(path = argv[1]);
-			generalNodes = Ordenar(generalNodes);
-			for (int i = 0; i < generalNodes.size(); i++)
+			vector<TreeElement *> generalElements = ReadFile(path = argv[1]);
+			//generalElements = Ordenar(generalElements);
+			vector<TreeNode *> nodes = Fill(generalElements);
+			for (int i = 0; i < nodes.size(); i++)
 			{
-				cout << "Letra: " << generalNodes.at(i)->GetElement() << "  Frecuencia :" << generalNodes.at(i)->GetFrequency() << endl;
+				cout << "Letra: " << nodes.at(i)->GetData()->GetElement() << " " << nodes.at(i)->GetData()->GetFrequency()<<endl;
 			}
-			
-			for (int i = 0; i < generalNodes.size(); i++)
+			//TreeNode *root = CreateTree(nodes);
+
+			for (int i = 0; i < generalElements.size(); i++)
 			{
-				delete generalNodes.at(i);
+				delete generalElements.at(i);
+				delete nodes.at(i);
 			}
+			cout<<"FINAL..."<<endl;
+
 		}
 		else
 		{
@@ -211,7 +218,7 @@ int IndexOf(vector<TreeElement *> elements, string toCompare)
  Params: 
  Retorna: 
  Errores: */
-vector<TreeElement *> Ordenar(vector<TreeElement *> elements)
+/*vector<TreeElement *> Ordenar(vector<TreeElement *> elements)
 {
 	TreeElement *temp;
 	vector<TreeElement *> tempElements;
@@ -234,4 +241,64 @@ vector<TreeElement *> Ordenar(vector<TreeElement *> elements)
 	}
 	elements = tempElements;
 	return elements;
+}
+*/
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
+vector<TreeNode *> Fill(vector<TreeElement *> generalElements)
+{
+	vector<TreeNode *> temporal;
+	for (int i = 0; i < generalElements.size(); i++)
+	{
+		temporal.push_back(new TreeNode(*generalElements.at(i)));
+	}
+
+	return Ordenar(temporal);
+}
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
+vector<TreeNode *> Ordenar(vector<TreeNode *> elements)
+{
+	TreeNode *temp;
+	vector<TreeNode *> tempElements;
+	for (int i = 1; i < elements.size(); i++)
+	{
+		for (int j = 0; j < elements.size() - 1; j++)
+		{
+			if (elements.at(j)->GetData()->GetFrequency() > elements.at(j + 1)->GetData()->GetFrequency())
+			{
+				temp = elements.at(j);
+				elements.at(j) = elements.at(j + 1);
+				elements.at(j + 1) = temp;
+			}
+		}
+	}
+
+	for (int i = elements.size() - 1; i >= 0; i--)
+	{
+		tempElements.push_back(elements.at(i));
+	}
+	elements = tempElements;
+	return elements;
+}
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
+TreeNode *CreateTree(vector<TreeNode *> Nodes)
+{
+	TreeNode *temp;
+	vector<TreeNode *> tempNodes=Nodes;
+	while (tempNodes.size() != 1)
+	{
+		Ordenar(tempNodes);
+	}
+	return temp;
 }

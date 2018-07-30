@@ -45,7 +45,6 @@ TreeNode::TreeNode(const TreeElement &data, TreeNode *parent)
 
 TreeNode::~TreeNode()
 {
-    cout << "eliminando..." << endl;
 }
 
 /* 
@@ -76,6 +75,7 @@ void TreeNode::SetParent(TreeNode *parent)
 
 void TreeNode::AddChild(const TreeElement &data)
 {
+    _children.insert(_children.begin(), new TreeNode(*new TreeElement(data.element, data.frequency), this));
 }
 /* 
  descripcion:
@@ -85,6 +85,7 @@ void TreeNode::AddChild(const TreeElement &data)
 
 void TreeNode::AddChild(TreeNode *child)
 {
+    child->SetParent(this);
     _children.insert(_children.begin(), child);
 }
 /* 

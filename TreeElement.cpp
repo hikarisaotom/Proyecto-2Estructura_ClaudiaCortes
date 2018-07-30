@@ -13,35 +13,72 @@
 using namespace std;
 using std::string;
 #include "TreeElement.h"
-
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
 TreeElement::TreeElement(string element, size_t frequency)
 {
     this->element = element;
     this->frequency = frequency;
 }
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
+
 TreeElement::TreeElement()
 {
     element = "";
     frequency = 0;
 }
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
+
 TreeElement::~TreeElement()
 {
     /*eliminara de la memoria los elementos*/
 }
-
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
 void TreeElement::SetFrequency(size_t newFrequency)
 {
     frequency = newFrequency;
 }
 
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
 void TreeElement::SetElement(string newElement)
 {
     element = newElement;
 }
+
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
+
 string TreeElement::GetElement()
 {
     return element;
 }
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
 size_t TreeElement::GetFrequency()
 {
     return frequency;
