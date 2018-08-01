@@ -1,0 +1,36 @@
+vector<TreeNode*> OrdenarNumerosNodos(vector<TreeNode*>  nodos){
+    TreeNode* tempNodo;
+    for(int i=0;i<nodos.size();i++){
+        
+        for(int i = 0; i <nodos.size()-1; i++){
+            TreeElement temp1 = nodos[i]->GetData();
+            TreeElement temp2 = nodos[i+1]->GetData();
+            
+            if(temp1.GetFrequency() < temp2.GetFrequency()){
+                tempNodo = nodos[i];
+                nodos[i] = nodos[i+1];
+                nodos[i+1] = tempNodo;
+
+            } 
+            
+        }
+
+
+    }
+
+    return nodos;
+}
+
+
+
+bool OrdenamientoFrecuencia(TreeElement* mayor, TreeElement* menor){
+    if(mayor->_frequency == menor->_frequency){
+        return mayor->_element > menor->_element ;
+    }else{
+        return mayor->_frequency > menor->_frequency;
+    }
+}
+
+bool OrdenamientoElemento(TreeElement* mayor, TreeElement* menor){
+    return mayor->_element > menor->_element ;
+}

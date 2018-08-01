@@ -80,9 +80,12 @@ string TreeElement::GetElement()
 }
 string TreeElement::Getcode()
 {
-    if(code==""){
+    if (code == "")
+    {
         return "NA";
-    }else{
+    }
+    else
+    {
         return code;
     }
 }
@@ -94,4 +97,14 @@ string TreeElement::Getcode()
 size_t TreeElement::GetFrequency()
 {
     return frequency;
+}
+
+void TreeElement::setAscii(int newElement)
+{
+    asciicoce = newElement;
+}
+
+int TreeElement::GetAsciicode()
+{
+    return asciicoce;
 }

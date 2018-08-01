@@ -29,9 +29,11 @@ public:
   TreeElement();
   void SetFrequency(size_t newFRequency);
   void SetElement(string newElement);
+  void setAscii(int x);
   void setcode(string);
   string GetElement();
   string Getcode();
+  int GetAsciicode();
   size_t GetFrequency();
 };
 #endif
