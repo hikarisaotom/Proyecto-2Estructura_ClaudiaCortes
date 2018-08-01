@@ -15,8 +15,8 @@
 #include "TreeNode.h"
 #include "TreeElement.h"
 #include <sstream>
+#include <bits/stdc++.h>
 using namespace std;
-
 /*Prototipos de los metodos.*/
 vector<TreeElement *> ReadFile(string);
 bool FileExist(char *);
@@ -27,7 +27,21 @@ vector<TreeNode *> Ordenar(vector<TreeNode *>);
 vector<TreeNode *> poner(vector<TreeNode *>, TreeNode *);
 TreeNode *CreateTree(vector<TreeNode *>);
 vector<TreeNode *> Fill(vector<TreeElement *>);
-void CodeGenerator();
+vector<TreeElement *> create(string);
+void CodeGenerator(TreeNode *);
+void Imprimir(vector<TreeNode *>);
+bool orderbyfrequency(TreeNode *, TreeNode *);
+bool orderbyletter(TreeNode *, TreeNode *);
+void reverseStr(string &str)
+{
+	int n = str.length();
+
+	// Swap character starting from two
+	// corners
+	for (int i = 0; i < n / 2; i++)
+		swap(str[i], str[n - i - 1]);
+}
+
 /********************MAIN*************************/
 int main(int argc, char *argv[])
 {
@@ -41,28 +55,13 @@ int main(int argc, char *argv[])
 		{
 			string path;
 			vector<TreeElement *> generalElements = ReadFile(path = argv[1]);
-			/****/
-			vector<TreeElement *> generalElements1;
-			for(int i=0;i<generalElements.size();i++){
-				if(generalElements.at(i)->GetElement()=="LF"){
-				
-				}else{
-					generalElements1.push_back(generalElements.at(i));
-				}
-			}
-			generalElements=generalElements1;
-			/****/
 			vector<TreeNode *> nodes = Fill(generalElements);
-
-			size_t tot;
-			for (int i = 0; i < nodes.size(); i++)
-			{
-				//cout << i << "Letra: " << nodes.at(i)->GetData()->GetElement() << " " << nodes.at(i)->GetData()->GetFrequency() << endl;
-				tot += nodes.at(i)->GetData()->GetFrequency();
-			}
-			cout << "EL TOTAL" << tot << endl;
+			sort(nodes.begin(), nodes.end(), orderbyfrequency);
+			/*sort(nodes.begin(), nodes.end(), orderbyletter);*/
+			Imprimir(nodes);
 			TreeNode *root = CreateTree(nodes);
-			cout << "La Ruta de la RAIZ ES: " << root->GetData()->GetElement() << " su peso es" << root->GetData()->GetFrequency() << endl;
+			cout << "Root: " << root->GetData()->GetElement() << " Peso: " << root->GetData()->GetFrequency() << endl;
+			/*PUEDE SER LA DE EL MISMO Y AGREGARLE LA DEL PADRE*/
 
 			for (int i = 0; i < generalElements.size(); i++)
 			{
@@ -70,8 +69,6 @@ int main(int argc, char *argv[])
 				delete generalElements.at(i);
 				delete nodes.at(i);
 			}
-
-			cout << "FINAL..." << endl;
 		}
 		else
 		{
@@ -84,25 +81,41 @@ int main(int argc, char *argv[])
  Params: 
  Retorna: 
  Errores: */
-vector<TreeElement *> ReadFile(string relativePath)
+vector<TreeElement *> create(string texto)
 {
-	vector<TreeElement *> elements;
-	ifstream archivo;
-	string texto = "";
 
-	archivo.open(relativePath, ios::in);
-	while (!archivo.eof())
+	vector<TreeElement *> elements;
+	for (int i = 0; i < texto.length(); i++)
 	{
-		stringstream LF_Concat;
-		getline(archivo, texto);
-		LF_Concat << texto;
-		LF_Concat << endl;
-		texto = LF_Concat.str();
-		for (int i = 0; i < texto.length(); i++)
+		stringstream letter;
+		letter << texto[i];
+		if (elements.size() == 0)
 		{
-			stringstream letter;
-			letter << texto[i];
-			if (elements.size() == 0)
+			int x = letter.str()[0];
+			if (x == 32)
+			{ //Espacio
+				elements.push_back(new TreeElement("SP", 1));
+			}
+			else if (x == 10)
+			{ //salto linea
+				elements.push_back(new TreeElement("LF", 0));
+			}
+			else if (x == 13)
+			{ //enter
+				elements.push_back(new TreeElement("CR", 1));
+			}
+			else if (x == -108 || x == -30 || x == -103 || x == -109 || x == -128)
+			{ //otros
+			}
+			else
+			{
+				elements.push_back(new TreeElement(letter.str(), 1));
+			}
+		}
+		else
+		{
+
+			if (!Contains(elements, letter.str()))
 			{
 				int x = texto[i];
 				if (x == 32)
@@ -111,48 +124,56 @@ vector<TreeElement *> ReadFile(string relativePath)
 				}
 				else if (x == 10)
 				{ //salto linea
-					elements.push_back(new TreeElement("LF", 1));
+					elements.push_back(new TreeElement("LF", 0));
 				}
 				else if (x == 13)
 				{ //enter
 					elements.push_back(new TreeElement("CR", 1));
 				}
-				else
+				else if (x == -108 || x == -30 || x == -103 || x == -109 || x == -128)
 				{ //otros
+				}
+				else
+				{
 					elements.push_back(new TreeElement(letter.str(), 1));
 				}
 			}
 			else
 			{
-
-				if (!Contains(elements, letter.str()))
-				{
-					int x = texto[i];
-					if (x == 32)
-					{ //Espacio
-						elements.push_back(new TreeElement("SP", 1));
-					}
-					else if (x == 10)
-					{ //salto linea
-						elements.push_back(new TreeElement("LF", 1));
-					}
-					else if (x == 13)
-					{ //enter
-						elements.push_back(new TreeElement("CR", 1));
-					}
-					else
-					{ //otros
-						elements.push_back(new TreeElement(letter.str(), 1));
-					}
-				}
-				else
-				{
-					int pos = IndexOf(elements, letter.str());
-					(elements.at(pos))->SetFrequency(elements.at(pos)->GetFrequency() + 1);
-				}
+				int pos = IndexOf(elements, letter.str());
+				(elements.at(pos))->SetFrequency(elements.at(pos)->GetFrequency() + 1);
 			}
 		}
 	}
+	//sort(elements.begin(),elements.end());
+	return elements;
+}
+vector<TreeElement *> ReadFile(string relativePath)
+{
+	ifstream archivo;
+	vector<TreeElement *> elements;
+	string texto = "";
+	stringstream LF_Concat;
+	archivo.open(relativePath, ios::in);
+	/**/
+	archivo.seekg(0, archivo.end);
+	int length = archivo.tellg();
+	archivo.seekg(0, archivo.beg);
+	/**/
+	char *buffer = new char[length];
+	archivo.read(buffer, length);
+
+	for (int i = 0; i < length; i++)
+	{
+		LF_Concat << buffer[i];
+		texto = LF_Concat.str();
+	}
+	stable_sort(texto.begin(), texto.end());
+
+	//reverseStr(texto);
+	// cout << texto<<endl;
+	delete[] buffer;
+	elements = create(texto);
 	archivo.close();
 	return elements;
 }
@@ -253,31 +274,7 @@ vector<TreeNode *> Fill(vector<TreeElement *> generalElements)
  Errores: */
 vector<TreeNode *> Ordenar(vector<TreeNode *> elements)
 {
-	TreeNode *temp;
-	vector<TreeNode *> tempElements;
-	for (int i = 1; i < elements.size(); i++)
-	{
-		for (int j = 0; j < elements.size() - 1; j++)
-		{
-			if (elements.at(j)->GetData()->GetFrequency() == elements.at(j + 1)->GetData()->GetFrequency())
-			{
-				//cout<<"IGUALES"<<endl;
-			}
-			else if (elements.at(j)->GetData()->GetFrequency() > elements.at(j + 1)->GetData()->GetFrequency())
-			{
-				temp = elements.at(j);
-				elements.at(j) = elements.at(j + 1);
-				elements.at(j + 1) = temp;
-			}
-		}
-	}
-	for (int i = elements.size() - 1; i >= 0; i--)
-	{
-		tempElements.push_back(elements.at(i));
-		cout << i << "p: " << tempElements.at(tempElements.size() - 1)->GetData()->GetElement() << " - " << tempElements.at(tempElements.size() - 1)->GetData()->GetFrequency() << endl;
-	}
-
-	elements = tempElements;
+	//	sort(elements.begin(), elements.end(), orderbyfrequency);
 	return elements;
 }
 /* 
@@ -300,30 +297,87 @@ TreeNode *CreateTree(vector<TreeNode *> Nodes)
 		{
 			temptempNodes.push_back(tempNodes.at(i));
 		}
+
 		if (child1->GetData()->GetFrequency() <= child2->GetData()->GetFrequency())
 		{
 			root << child1->GetData()->GetElement() << child2->GetData()->GetElement();
 			TreeNode *Nodex = new TreeNode(*new TreeElement(root.str(), newFrequency));
-
+			child1->GetData()->setcode("0");
+			child2->GetData()->setcode("1");
 			Nodex->AddChild(child2);
 			Nodex->AddChild(child1);
-			temptempNodes = poner(temptempNodes, Nodex);
+			temptempNodes.push_back(Nodex);
 		}
 		else
 		{ //child2<child1
+
 			root << child2->GetData()->GetElement() << child1->GetData()->GetElement();
 			TreeNode *Nodex = new TreeNode(*new TreeElement(root.str(), newFrequency));
+			child1->GetData()->setcode("1");
+			child2->GetData()->setcode("0");
 			Nodex->AddChild(child1);
 			Nodex->AddChild(child2);
-			temptempNodes = poner(temptempNodes, Nodex);
+			temptempNodes.push_back(Nodex);
 		}
 
-		cout << "RECIEN CREADO: " << temptempNodes.at(temptempNodes.size() - 1)->GetData()->GetElement() << "peso: " << temptempNodes.at(temptempNodes.size() - 1)->GetData()->GetFrequency() << endl;
-		tempNodes = Ordenar(temptempNodes);
+		cout << "----------------" << endl;
+		sort(temptempNodes.begin(), temptempNodes.end(), orderbyfrequency);
+		tempNodes = temptempNodes;
+		Imprimir(temptempNodes);
 	}
 	return tempNodes.at(0);
 }
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
+void CodeGenerator(TreeNode *root)
+{
+	vector<TreeNode *> childrens = root->GetChildren();
+}
+/* 
+ descripcion:
+ Params: 
+ Retorna: 
+ Errores: */
+void Imprimir(vector<TreeNode *> tempElements)
+{
+	size_t tot = 0;
+	cout << "Imprimiento" << endl;
+	for (int i = 0; i < tempElements.size(); i++)
+	{
+		tot += tempElements.at(i)->GetData()->GetFrequency();
+		cout << i << "p: " << tempElements.at(i)->GetData()->GetElement() << " - " << tempElements.at(i)->GetData()->GetFrequency() << "hijo ";
+		if (tempElements.at(i)->GetChildren().size() > 0)
+		{
+			for (int x = 0; x < tempElements.at(i)->GetChildren().size(); x++)
+			{
+				cout << tempElements.at(i)->GetChildren().at(x)->GetData()->GetElement() << " ";
+			}
+		}
+		cout << endl;
+	}
+	cout << "TOTAL" << tot << endl;
+}
+bool orderbyfrequency(TreeNode *L1, TreeNode *L2)
+{
+	return L1->GetData()->GetFrequency() > L2->GetData()->GetFrequency();
+}
 
+bool orderbyletter(TreeNode *L1, TreeNode *L2)
+{
+	if (L1->GetData()->GetFrequency() == L2->GetData()->GetFrequency())
+	{
+		//cout<<L1->GetData()->GetElement()[0]<<">"<<L2->GetData()->GetElement()[0]<<endl;
+		return L1->GetData()->GetElement()[0] > L2->GetData()->GetElement()[0];
+	}
+	else
+	{
+		return L1->GetData()->GetFrequency() > L2->GetData()->GetFrequency();
+	}
+}
+/*
 vector<TreeNode *> poner(vector<TreeNode *> nodes, TreeNode *element)
 {
 	bool flag = false;
@@ -347,3 +401,4 @@ vector<TreeNode *> poner(vector<TreeNode *> nodes, TreeNode *element)
 	}
 	return nodes;
 }
+*/

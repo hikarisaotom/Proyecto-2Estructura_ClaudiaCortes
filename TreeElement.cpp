@@ -64,6 +64,10 @@ void TreeElement::SetElement(string newElement)
     element = newElement;
 }
 
+void TreeElement::setcode(string newElement)
+{
+    code = newElement;
+}
 /* 
  descripcion:
  Params: 
@@ -73,6 +77,14 @@ void TreeElement::SetElement(string newElement)
 string TreeElement::GetElement()
 {
     return element;
+}
+string TreeElement::Getcode()
+{
+    if(code==""){
+        return "NA";
+    }else{
+        return code;
+    }
 }
 /* 
  descripcion:

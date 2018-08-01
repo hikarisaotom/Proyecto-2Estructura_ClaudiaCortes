@@ -18,18 +18,20 @@ using namespace std;
 
 class TreeElement
 {
-  private:
-   
-
-  public:
-   string element;
-    size_t frequency;
-    TreeElement(string element, size_t frequency);
-    ~TreeElement();
-    TreeElement();
-    void SetFrequency(size_t newFRequency);
-    void SetElement(string newElement);
-    string GetElement();
-    size_t GetFrequency();
+private:
+public:
+  string element;
+  string code;
+  size_t frequency;
+  int asciicoce;
+  TreeElement(string element, size_t frequency);
+  ~TreeElement();
+  TreeElement();
+  void SetFrequency(size_t newFRequency);
+  void SetElement(string newElement);
+  void setcode(string);
+  string GetElement();
+  string Getcode();
+  size_t GetFrequency();
 };
 #endif
