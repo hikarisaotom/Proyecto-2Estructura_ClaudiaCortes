@@ -448,3 +448,72 @@ TreeNode * nodo1=new TreeNode(*generalNodes.at(0));
 			for(int i=0;i<child.size();i++){
 				cout<<i<<"LETRA"<<child.at(i)->GetData()->GetElement()<<"frecuencia: "<<child.at(i)->GetData()->GetFrequency()<<endl;
 			}*/
+
+
+
+
+
+/* MIO
+TreeNode *CreateTree(vector<TreeNode *> Nodes)
+{
+	vector<TreeNode *> tempNodes = Nodes;
+	int i = tempNodes.size();
+	while (tempNodes.size() > 1) //Rendimiento log n
+	{
+		stringstream root;
+		vector<TreeNode *> temptempNodes;
+		TreeNode *child1 = tempNodes.at(tempNodes.size() - 1);
+		TreeNode *child2 = tempNodes.at(tempNodes.size() - 2);
+		size_t newFrequency = child1->GetData()->GetFrequency() + child2->GetData()->GetFrequency();
+		for (int i = 0; i < tempNodes.size() - 2; i++)
+		{
+			temptempNodes.push_back(tempNodes.at(i));
+		}
+
+		/*if (child1->GetData()->GetFrequency() <= child2->GetData()->GetFrequency())
+		{*/
+/*	root << child2->GetData()->GetElement() << child1->GetData()->GetElement();
+		
+		child1->GetData()->setcode("0");
+		child2->GetData()->setcode("1");
+		Nodex->AddChild(child2);
+		Nodex->AddChild(child1);
+		temptempNodes.push_back(Nodex);
+		//}
+		//cout << "----------------" << endl;
+		sort(temptempNodes.begin(), temptempNodes.end(), orderbyfrequency);
+		tempNodes = temptempNodes;
+	//	Imprimir(temptempNodes);
+	}
+	return tempNodes.at(0);
+}
+*/
+/*
+
+
+
+
+
+*/
+/*vector<TreeNode*> Ordenar(vector<TreeNode*>  nodos){
+    TreeNode* tempNodo;
+    for(int i=0;i<nodos.size();i++){
+        
+        for(int i = 0; i <nodos.size()-1; i++){
+            TreeElement temp1 = nodos[i]->GetData();
+            TreeElement temp2 = nodos[i+1]->GetData();
+            
+            if(temp1.GetFrequency() < temp2.GetFrequency()){
+                tempNodo = nodos[i];
+                nodos[i] = nodos[i+1];
+                nodos[i+1] = tempNodo;
+
+            } 
+            
+        }
+
+
+    }
+
+    return nodos;
+}*/

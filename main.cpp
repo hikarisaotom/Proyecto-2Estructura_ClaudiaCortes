@@ -10,7 +10,7 @@
 #include <stdio.h> //exist
 #include <string>
 #include <vector>
-#include <fstream>   //lectura
+#include <fstream> //lectura
 #include <sstream>
 #include <bits/stdc++.h>
 #include <algorithm>
@@ -44,14 +44,14 @@ int main(int argc, char *argv[])
 	else
 	{
 		if (FileExist(argv[1]))
-		{//el archivo se abrio exitosamente 
+		{ //el archivo se abrio exitosamente
 
 			string path;
 			vector<TreeElement *> generalElements = ReadFile(path = argv[1]);
 			vector<TreeNode *> nodes = Fill(generalElements);
-			//sort(nodes.begin(), nodes.end(), orderbyfrequency);
+			sort(nodes.begin(), nodes.end(), orderbyletter);/***/
 			TreeNode *root = CreateTree(nodes);
-			cout << root->GetData()->GetElement()<<endl;
+			cout << root->GetData()->GetElement() << endl;
 			for (int i = 0; i < nodes.size(); i++)
 			{
 				nodes.at(i)->GetData()->setcode(CodeGenerator(root, nodes.at(i)));
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		else
-		{//el archivo no existe 
+		{ //el archivo no existe
 			cout << "Archivo inexistente, verifique la ruta" << endl;
 		}
 	}
@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
  Params: string de texto que contiene todos los caracteres del archivo para su clasificacion y conteo
  Retorna: un vector con los TreeElements que estaran contenidos dentro de los nodos del arbol.
  Errores: si encuentra un caracter no valido en el archivo no lo agrega */
+
 vector<TreeElement *> create(string texto)
 {
 	vector<TreeElement *> elements;
@@ -93,7 +94,7 @@ vector<TreeElement *> create(string texto)
 			}
 			else if (x == 10)
 			{ //salto linea
-				elements.push_back(new TreeElement("LF", 0));
+				elements.push_back(new TreeElement("LF", 1));
 				elements.at(elements.size() - 1)->setAscii(x);
 			}
 			else if (x == 13)
@@ -101,11 +102,11 @@ vector<TreeElement *> create(string texto)
 				elements.push_back(new TreeElement("CR", 1));
 				elements.at(elements.size() - 1)->setAscii(x);
 			}
-			else if (x <0)
+			else if (x < 0)
 			{ //Caracteres no validos
 			}
 			else
-			{///Otros caracteres 
+			{ ///Otros caracteres
 				elements.push_back(new TreeElement(letter.str(), 1));
 				elements.at(elements.size() - 1)->setAscii(x);
 			}
@@ -123,7 +124,7 @@ vector<TreeElement *> create(string texto)
 				}
 				else if (x == 10)
 				{ //salto linea
-					elements.push_back(new TreeElement("LF", 0));
+					elements.push_back(new TreeElement("LF", 1));
 					elements.at(elements.size() - 1)->setAscii(x);
 				}
 				else if (x == 13)
@@ -150,6 +151,13 @@ vector<TreeElement *> create(string texto)
 
 	return elements;
 }
+
+/* 
+ descripcion: Abre el archivo y crea una cadena de texto que contiene todos los caracteres para luego clasificarlos 
+ Params: string path, representa la ruta del archivo que deseamos cargar 
+ Retorna: un vector con los TreeElements que estaran contenidos dentro de los nodos del arbol.
+ Errores:  */
+
 vector<TreeElement *> ReadFile(string relativePath)
 {
 	ifstream archivo;
@@ -157,33 +165,30 @@ vector<TreeElement *> ReadFile(string relativePath)
 	string texto = "";
 	stringstream LF_Concat;
 	archivo.open(relativePath, ios::in);
-	/**/
+	/*metodos de la clase algorithm para crear el buffer*/
 	archivo.seekg(0, archivo.end);
 	int length = archivo.tellg();
 	archivo.seekg(0, archivo.beg);
-	/**/
 	char *buffer = new char[length];
+
 	archivo.read(buffer, length);
 
 	for (int i = 0; i < length; i++)
 	{
 		LF_Concat << buffer[i];
-		texto = LF_Concat.str();
 	}
+	texto = LF_Concat.str();
 	stable_sort(texto.begin(), texto.end());
-
-	//reverseStr(texto);
-	// cout << texto<<endl;
 	delete[] buffer;
 	elements = create(texto);
 	archivo.close();
 	return elements;
 }
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
+ descripcion:Determina si el archivo existe dentro del directorio
+ Params: char * Path, la ruta del archivo a comprobar 
+ Retorna: false si no se encuentra el archivo, true en caso contrario 
+ Errores:si no encuentra el archivo retornara false */
 bool FileExist(char *Path)
 {
 	bool flag = false;
@@ -195,11 +200,13 @@ bool FileExist(char *Path)
 	}
 	return flag;
 }
+
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
+ descripcion:Determina si un elemento ya esta dentro de un arreglo
+ Params: Vector con los elemntos que forman los nodos, el simbolo del que queremos agregar
+ Retorna: true si se encuentra una coincidencia de elementos, false si no se encuentra
+ Errores: se omite el manejo de caracteres espciales ya que esos fueron descartados en metodos anteriores 
+ que se encargan de construir los parametros de este metodo*/
 bool Contains(vector<TreeElement *> elements, string toCompare)
 {
 	for (int i = 0; i < elements.size(); i++)
@@ -225,10 +232,10 @@ bool Contains(vector<TreeElement *> elements, string toCompare)
 	return false;
 }
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
+ descripcion: Retorna  la posicion dentro del arreglo de un determinado elemento
+ Params: Vector con los elemntos que forman los nodos, el simbolo del que queremos encontrar
+ Retorna: un entero que representa la posicio dentro del arreglo de Tree Elements
+ Errores: retorna -1 si no encuentra un elemento*/
 int IndexOf(vector<TreeElement *> elements, string toCompare)
 {
 	for (int i = 0; i < elements.size(); i++)
@@ -255,10 +262,10 @@ int IndexOf(vector<TreeElement *> elements, string toCompare)
 }
 
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
+ descripcion: Crea asigna los elementos a los nodos que formaran el arbol 
+ Params: Vector de TreeElementos* para insertarlos en los nodos
+ Retorna: el arreglo de nodos ordenado.
+ Errores: NA */
 vector<TreeNode *> Fill(vector<TreeElement *> generalElements)
 {
 	vector<TreeNode *> temporal;
@@ -270,27 +277,25 @@ vector<TreeNode *> Fill(vector<TreeElement *> generalElements)
 	return Ordenar(temporal);
 }
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
+ descripcion:Ordena los elementos del arreglo de nodos en orden descente
+ Params: Vector de TreeNode * que deseamos ordenar 
+ Retorna: Vector de Nodos* ordenado 
+ Errores: NA*/
 vector<TreeNode *> Ordenar(vector<TreeNode *> elements)
 {
-	//	sort(elements.begin(), elements.end(), orderbyfrequency);
 	return elements;
 }
-/* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
 
+/* 
+ descripcion: Crea el Arbol con el cual se generara la codificacion 
+ Params: Vector de Nodes * para generar cada subarbol
+ Retorna: Tree Node* que sera la raiz del arbol
+ Errores: */
 TreeNode *CreateTree(vector<TreeNode *> Nodes)
 {
 	vector<TreeNode *> tempNodes = Nodes;
-	sort(Nodes.begin(), Nodes.end(), orderbyfrequency);
-	//Imprimir(Nodes);
-	//cout << "-------------------------------------------------------------------------" << endl;
+	tempNodes = Ordenar1(tempNodes);
+	//sort(Nodes.begin(), Nodes.end(), orderbyfrequency);
 	while (tempNodes.size() > 1)
 	{
 		stringstream root;
@@ -303,11 +308,11 @@ TreeNode *CreateTree(vector<TreeNode *> Nodes)
 		{
 			root << childLeft->GetData()->GetElement() << childRight->GetData()->GetElement();
 			flag = true;
-		}
+		} /*
 		else if (childLeft->GetData()->GetFrequency() > childRight->GetData()->GetFrequency())
-		{ //esta mal ordenado :c
+		{ //
 			root << childRight->GetData()->GetElement() << childLeft->GetData()->GetElement();
-		}
+		}*/
 
 		TreeNode *Nodex = new TreeNode(*new TreeElement(root.str(), newFrequency));
 		if (flag)
@@ -320,58 +325,58 @@ TreeNode *CreateTree(vector<TreeNode *> Nodes)
 			Nodex->AddChild(childLeft);
 			Nodex->AddChild(childRight);
 		}
-
 		tempNodes.pop_back();
 		tempNodes.pop_back();
 		tempNodes.push_back(Nodex);
-			tempNodes=Ordenar1(tempNodes);
-		//sort(tempNodes.begin(), tempNodes.end(), orderbyfrequency);
-		//	cout << "-------------------------------------------------------------------------" << endl;
-		//cout << "-------------------------------------------------------------------------" << endl;
+		sort(tempNodes.begin(), tempNodes.end(), orderbyletter);
+		//tempNodes = Ordenar1(tempNodes);
 	}
 	return tempNodes.at(0);
 }
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
+ descripcion: Imprime el vector de TreeNodes que forman el arbol 
+ Params: Vector de TreeNode* que se desea visualizar  
+ Retorna: N/A 
+ Errores: N/A*/
 void Imprimir(vector<TreeNode *> tempElements)
 {
-	size_t tot = 0;
 	for (int i = 0; i < tempElements.size(); i++)
 	{
-		tot += tempElements.at(i)->GetData()->GetFrequency();
 		cout << "{key: " << tempElements.at(i)->GetData()->GetElement() << ", code: " << tempElements.at(i)->GetData()->Getcode() << "}" << endl;
 	}
 }
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
-bool orderbyfrequency(TreeNode *L1, TreeNode *L2)
+ descripcion: Ordena por frecuancia los elemntos del arreglo 
+ Params: TreeNode* NodeL, TreeNode * NodeR que seran los elemntos a comparar  
+ Retorna: true si nodeL es mayor al node R, false en caso contrario
+ Errores: NA*/
+bool orderbyfrequency(TreeNode *nodeL, TreeNode *nodeR)
 {
-	return L1->GetData()->GetFrequency() > L2->GetData()->GetFrequency();
+	return nodeL->GetData()->GetFrequency() > nodeR->GetData()->GetFrequency();
 }
+
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
-bool orderbyletter(TreeNode *L1, TreeNode *L2)
+ descripcion: Ordena por caracteres los elemntos del arreglo 
+ Params: TreeNode* NodeL, TreeNode * NodeR que seran los elemntos a comparar  
+ Retorna: true si nodeL es mayor al node R, false en caso contrario
+ Errores: NA*/
+bool orderbyletter(TreeNode *nodeL, TreeNode *nodeR)
 {
-	if (L1->GetData()->GetFrequency() == L2->GetData()->GetFrequency())
+	if (nodeL->GetData()->GetFrequency() == nodeR->GetData()->GetFrequency())
 	{
-		//cout<<L1->GetData()->GetElement()[0]<<">"<<L2->GetData()->GetElement()[0]<<endl;
-		return L1->GetData()->GetElement()[0] > L2->GetData()->GetElement()[0];
+		return nodeL->GetData()->GetElement()> nodeR->GetData()->GetElement();
 	}
 	else
 	{
-		return L1->GetData()->GetFrequency() > L2->GetData()->GetFrequency();
+		return nodeL->GetData()->GetFrequency() > nodeR->GetData()->GetFrequency();
 	}
 }
 
+/* 
+ descripcion: Genera la codificacion de cada uno de los nodos del arbol. 
+ Params: TreeNode* root, la raiz del arbol y TReeNode* toGenerate que sera el elmento al cual se le generara el codigo
+ Retorna: string con la codificacion del elemento
+ Errores: Si encuentra el elemntos o llegamos hasta una hoja entonces salimos del ciclo*/
 
 string CodeGenerator(TreeNode *root, TreeNode *toGenerate)
 {
@@ -380,10 +385,9 @@ string CodeGenerator(TreeNode *root, TreeNode *toGenerate)
 	while (!temp->IsLeaf())
 	{
 		vector<TreeNode *> childrens;
-
 		childrens = temp->GetChildren();
 		if (childrens.at(0)->GetData()->GetElement().find(toGenerate->GetData()->GetElement()) != std::string::npos)
-		{
+		{//izquierda
 			if (childrens.at(0)->GetData()->GetElement() == toGenerate->GetData()->GetElement())
 			{
 				concat << "1";
@@ -397,7 +401,7 @@ string CodeGenerator(TreeNode *root, TreeNode *toGenerate)
 			}
 		}
 		else
-		{ //esta a la derecha
+		{ //derecha
 			if (childrens.at(1)->GetData()->GetElement() == toGenerate->GetData()->GetElement())
 			{
 				concat << "0";
@@ -415,94 +419,28 @@ string CodeGenerator(TreeNode *root, TreeNode *toGenerate)
 	return concat.str();
 }
 /* 
- descripcion:
- Params: 
- Retorna: 
- Errores: */
+ descripcion:Ordena los elemntos vector que conforman los nodos del arbol
+ Params: Vector TreeNode* que deseamos ordenar 
+ Retorna: el vector ordenado 
+ Errores: NA*/
 vector<TreeNode *> Ordenar1(vector<TreeNode *> nodos)
 {
-	 TreeNode* tempNodo;
-    for(int i=0;i<nodos.size();i++){
-        
-        for(int i = 0; i <nodos.size()-1; i++){
-            TreeElement* temp1 = nodos[i]->GetData();
-            TreeElement* temp2 = nodos[i+1]->GetData();
-            
-            if(temp1->GetFrequency() < temp2->GetFrequency()){
-                tempNodo = nodos[i];
-                nodos[i] = nodos[i+1];
-                nodos[i+1] = tempNodo;
+	TreeNode *tempNodo;
+	for (int i = 0; i < nodos.size(); i++)
+	{
 
-            } 
-            
-        }
+		for (int i = 0; i < nodos.size() - 1; i++)
+		{
+			TreeElement *temp1 = nodos[i]->GetData();
+			TreeElement *temp2 = nodos[i + 1]->GetData();
 
-
-    }
+			if (temp1->GetFrequency() < temp2->GetFrequency())
+			{
+				tempNodo = nodos[i];
+				nodos[i] = nodos[i + 1];
+				nodos[i + 1] = tempNodo;
+			}
+		}
+	}
 	return nodos;
 }
-
-/* MIO
-TreeNode *CreateTree(vector<TreeNode *> Nodes)
-{
-	vector<TreeNode *> tempNodes = Nodes;
-	int i = tempNodes.size();
-	while (tempNodes.size() > 1) //Rendimiento log n
-	{
-		stringstream root;
-		vector<TreeNode *> temptempNodes;
-		TreeNode *child1 = tempNodes.at(tempNodes.size() - 1);
-		TreeNode *child2 = tempNodes.at(tempNodes.size() - 2);
-		size_t newFrequency = child1->GetData()->GetFrequency() + child2->GetData()->GetFrequency();
-		for (int i = 0; i < tempNodes.size() - 2; i++)
-		{
-			temptempNodes.push_back(tempNodes.at(i));
-		}
-
-		/*if (child1->GetData()->GetFrequency() <= child2->GetData()->GetFrequency())
-		{*/
-/*	root << child2->GetData()->GetElement() << child1->GetData()->GetElement();
-		
-		child1->GetData()->setcode("0");
-		child2->GetData()->setcode("1");
-		Nodex->AddChild(child2);
-		Nodex->AddChild(child1);
-		temptempNodes.push_back(Nodex);
-		//}
-		//cout << "----------------" << endl;
-		sort(temptempNodes.begin(), temptempNodes.end(), orderbyfrequency);
-		tempNodes = temptempNodes;
-	//	Imprimir(temptempNodes);
-	}
-	return tempNodes.at(0);
-}
-*/
-/*
-
-
-
-
-
-*/
-/*vector<TreeNode*> Ordenar(vector<TreeNode*>  nodos){
-    TreeNode* tempNodo;
-    for(int i=0;i<nodos.size();i++){
-        
-        for(int i = 0; i <nodos.size()-1; i++){
-            TreeElement temp1 = nodos[i]->GetData();
-            TreeElement temp2 = nodos[i+1]->GetData();
-            
-            if(temp1.GetFrequency() < temp2.GetFrequency()){
-                tempNodo = nodos[i];
-                nodos[i] = nodos[i+1];
-                nodos[i+1] = tempNodo;
-
-            } 
-            
-        }
-
-
-    }
-
-    return nodos;
-}*/
