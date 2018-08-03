@@ -44,14 +44,14 @@ int main(int argc, char *argv[])
 			vector<TreeNode *> nodes = Fill(generalElements);
 			sort(nodes.begin(), nodes.end(), orderbyletter);
 			TreeNode *root = CreateTree(nodes);
-			
 			for (int i = 0; i < nodes.size(); i++)
 			{
 				nodes.at(i)->GetData()->setcode(CodeGenerator(root, nodes.at(i)));
 			}
 			Imprimir(nodes);
 			delete root;
-			for(int i=0;i<generalElements.size();i++){
+			for (int i = 0; i < generalElements.size(); i++)
+			{
 				delete generalElements.at(i);
 				delete nodes.at(i);
 			}
@@ -84,7 +84,6 @@ vector<TreeElement *> create(string texto)
 			else
 			{ ///Otros caracteres
 				elements.push_back(new TreeElement(letter.str(), 1));
-				elements.at(elements.size() - 1)->setAscii(x);
 			}
 		}
 		else
@@ -92,14 +91,12 @@ vector<TreeElement *> create(string texto)
 			if (!Contains(elements, letter.str()))
 			{
 				int x = texto[i];
-
 				if (x < 0)
 				{ //caracteres no validos
 				}
 				else
 				{
 					elements.push_back(new TreeElement(letter.str(), 1));
-					elements.at(elements.size() - 1)->setAscii(x);
 				}
 			}
 			else

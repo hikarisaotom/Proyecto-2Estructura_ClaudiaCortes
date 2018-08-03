@@ -18,12 +18,11 @@ using namespace std;
 
 class TreeElement
 {
-private:
 public:
   string element;
   string code;
   size_t frequency;
-  int asciicoce;
+  int asciiCode;
   TreeElement(string element, size_t frequency);
   ~TreeElement();
   TreeElement();

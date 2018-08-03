@@ -117,7 +117,7 @@ size_t TreeElement::GetFrequency()
  Errores: NA*/
 void TreeElement::setAscii(int newElement)
 {
-    asciicoce = newElement;
+    asciiCode = newElement;
 }
 
 /* 
@@ -127,5 +127,5 @@ void TreeElement::setAscii(int newElement)
  Errores: NA*/
 int TreeElement::GetAsciicode()
 {
-    return asciicoce;
+    return asciiCode;
 }
