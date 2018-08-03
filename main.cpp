@@ -49,14 +49,14 @@ int main(int argc, char *argv[])
 			string path;
 			vector<TreeElement *> generalElements = ReadFile(path = argv[1]);
 			vector<TreeNode *> nodes = Fill(generalElements);
-			sort(nodes.begin(), nodes.end(), orderbyletter);/***/
+			sort(nodes.begin(), nodes.end(), orderbyletter); /***/
 			TreeNode *root = CreateTree(nodes);
-			cout << root->GetData()->GetElement() << endl;
+			//cout << root->GetData()->GetElement() << endl;
 			for (int i = 0; i < nodes.size(); i++)
 			{
 				nodes.at(i)->GetData()->setcode(CodeGenerator(root, nodes.at(i)));
 			}
-			sort(nodes.begin(), nodes.end(), orderbyfrequency);
+			//sort(nodes.begin(), nodes.end(), orderbyfrequency);
 			Imprimir(nodes);
 			for (int i = 0; i < generalElements.size(); i++)
 			{
@@ -87,22 +87,7 @@ vector<TreeElement *> create(string texto)
 		if (elements.size() == 0)
 		{
 			int x = letter.str()[0];
-			if (x == 32)
-			{ //Espacio
-				elements.push_back(new TreeElement("SP", 1));
-				elements.at(elements.size() - 1)->setAscii(x);
-			}
-			else if (x == 10)
-			{ //salto linea
-				elements.push_back(new TreeElement("LF", 1));
-				elements.at(elements.size() - 1)->setAscii(x);
-			}
-			else if (x == 13)
-			{ //enter
-				elements.push_back(new TreeElement("CR", 1));
-				elements.at(elements.size() - 1)->setAscii(x);
-			}
-			else if (x < 0)
+			if (x < 0)
 			{ //Caracteres no validos
 			}
 			else
@@ -113,26 +98,11 @@ vector<TreeElement *> create(string texto)
 		}
 		else
 		{
-
 			if (!Contains(elements, letter.str()))
 			{
 				int x = texto[i];
-				if (x == 32)
-				{ //Espacio
-					elements.push_back(new TreeElement("SP", 1));
-					elements.at(elements.size() - 1)->setAscii(x);
-				}
-				else if (x == 10)
-				{ //salto linea
-					elements.push_back(new TreeElement("LF", 1));
-					elements.at(elements.size() - 1)->setAscii(x);
-				}
-				else if (x == 13)
-				{ //enter
-					elements.push_back(new TreeElement("CR", 1));
-					elements.at(elements.size() - 1)->setAscii(x);
-				}
-				else if (x < 0)
+
+				if (x < 0)
 				{ //otros
 				}
 				else
@@ -211,7 +181,7 @@ bool Contains(vector<TreeElement *> elements, string toCompare)
 {
 	for (int i = 0; i < elements.size(); i++)
 	{
-		int x = toCompare[0];
+		/*int x = toCompare[0];
 		if (x == 32 && elements.at(i)->GetElement() == "SP")
 		{ //Espacio
 			return true;
@@ -224,7 +194,7 @@ bool Contains(vector<TreeElement *> elements, string toCompare)
 		{ //enter
 			return true;
 		}
-		else if (elements.at(i)->GetElement() == toCompare)
+		else*/ if (elements.at(i)->GetElement() == toCompare)
 		{
 			return true;
 		}
@@ -241,7 +211,7 @@ int IndexOf(vector<TreeElement *> elements, string toCompare)
 	for (int i = 0; i < elements.size(); i++)
 	{
 		int x = toCompare[0];
-		if (x == 32 && elements.at(i)->GetElement() == "SP")
+		/*if (x == 32 && elements.at(i)->GetElement() == "SP")
 		{ //Espacio
 			return i;
 		}
@@ -253,7 +223,7 @@ int IndexOf(vector<TreeElement *> elements, string toCompare)
 		{ //enter
 			return i;
 		}
-		else if (elements.at(i)->GetElement() == toCompare)
+		else*/ if (elements.at(i)->GetElement() == toCompare)
 		{
 			return i;
 		}
@@ -342,7 +312,18 @@ void Imprimir(vector<TreeNode *> tempElements)
 {
 	for (int i = 0; i < tempElements.size(); i++)
 	{
-		cout << "{key: " << tempElements.at(i)->GetData()->GetElement() << ", code: " << tempElements.at(i)->GetData()->Getcode() << "}" << endl;
+		if (tempElements.at(i)->GetData()->GetElement() == " ")
+		{
+			cout << "{key: SP, code: " << tempElements.at(i)->GetData()->Getcode() << "}" << endl;
+		}
+		else if (tempElements.at(i)->GetData()->GetElement() == "\n")
+		{
+			cout << "{key: LF, code: " << tempElements.at(i)->GetData()->Getcode() << "}" << endl;
+		}
+		else
+		{
+			cout << "{key: " << tempElements.at(i)->GetData()->GetElement() << ", code: " << tempElements.at(i)->GetData()->Getcode() << "}" << endl;
+		}
 	}
 }
 /* 
@@ -364,7 +345,7 @@ bool orderbyletter(TreeNode *nodeL, TreeNode *nodeR)
 {
 	if (nodeL->GetData()->GetFrequency() == nodeR->GetData()->GetFrequency())
 	{
-		return nodeL->GetData()->GetElement()> nodeR->GetData()->GetElement();
+		return nodeL->GetData()->GetElement() > nodeR->GetData()->GetElement();
 	}
 	else
 	{
@@ -387,7 +368,7 @@ string CodeGenerator(TreeNode *root, TreeNode *toGenerate)
 		vector<TreeNode *> childrens;
 		childrens = temp->GetChildren();
 		if (childrens.at(0)->GetData()->GetElement().find(toGenerate->GetData()->GetElement()) != std::string::npos)
-		{//izquierda
+		{ //izquierda
 			if (childrens.at(0)->GetData()->GetElement() == toGenerate->GetData()->GetElement())
 			{
 				concat << "1";

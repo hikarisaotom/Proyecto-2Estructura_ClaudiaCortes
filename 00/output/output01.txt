@@ -1,4 +1,3 @@
-dmteianwp,-HL;lcIYqSTbkvosguSPhAWj!.LFfyr
 {key: SP, code: 001}
 {key: e, code: 110}
 {key: o, code: 0101}
