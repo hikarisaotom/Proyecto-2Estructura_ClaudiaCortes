@@ -49,6 +49,11 @@ TreeNode::TreeNode(const TreeElement &data, TreeNode *parent)
 
 TreeNode::~TreeNode()
 {
+    for (int i = 0; i < _children.size(); i++)
+    {
+        delete _children.at(i)->GetData();
+        delete _children.at(i);
+    }
 }
 
 /* 
@@ -153,3 +158,4 @@ bool TreeNode::IsLeaf()
         return false;
     }
 }
+

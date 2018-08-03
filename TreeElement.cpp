@@ -42,7 +42,6 @@ TreeElement::TreeElement()
 
 TreeElement::~TreeElement()
 {
-    
 }
 
 /* 

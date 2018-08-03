@@ -44,13 +44,14 @@ int main(int argc, char *argv[])
 			vector<TreeNode *> nodes = Fill(generalElements);
 			sort(nodes.begin(), nodes.end(), orderbyletter);
 			TreeNode *root = CreateTree(nodes);
+			
 			for (int i = 0; i < nodes.size(); i++)
 			{
 				nodes.at(i)->GetData()->setcode(CodeGenerator(root, nodes.at(i)));
 			}
 			Imprimir(nodes);
-			for (int i = 0; i < generalElements.size(); i++)
-			{
+			delete root;
+			for(int i=0;i<generalElements.size();i++){
 				delete generalElements.at(i);
 				delete nodes.at(i);
 			}

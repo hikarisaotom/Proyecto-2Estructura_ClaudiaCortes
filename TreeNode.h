@@ -35,5 +35,6 @@ public:
   void SetData(const TreeElement&);
   bool IsRoot();
   bool IsLeaf();
+  void elimanar(TreeNode*);
 };
 #endif
